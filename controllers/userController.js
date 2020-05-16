@@ -3,10 +3,6 @@ const router = express.Router();
 const authenticate = require("../middlewares/authenticate")
 const {User} = require("../models/user")
 
-// router.get("/", (req, res) => {
-//     res.send("This is a user route")
-// })
-
 router.post("/register", (req, res) => {
     const userData = {
         name: req.body.name,
@@ -33,10 +29,10 @@ router.post("/login", (req, res) => {
                 res.header({"x-auth": token}).send(user);
             });
         } else {
-            throw "Wrong Email or Password";
+            throw Error;
         }
     }).catch((e) => {
-        res.status(400).send(e)
+        res.status(400).send("Wrong Email or Password")
     });
 })
 
