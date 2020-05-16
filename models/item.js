@@ -7,6 +7,7 @@ const ItemSchema = new Schema({
         type: String,
         trim: true,
         required: true,
+        unique: true,
         minlength: 4
     },
     price: {
