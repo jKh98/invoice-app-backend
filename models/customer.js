@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema
+const _ = require("lodash")
 
 const CustomerSchema = new Schema({
     name: {
@@ -42,10 +43,12 @@ const CustomerSchema = new Schema({
     }]
 })
 
+CustomerSchema.index({email: 1, sweepstakes_id: 1}, {unique: true});
+
 CustomerSchema.methods.toJSON = function () {
     const customer = this;
     const customerObject = customer.toObject();
-    return _.pick(customerObject, ["_id", "name", "email","company","phone","mobile","addresses","merchant"]);
+    return _.pick(customerObject, ["_id", "name", "email", "company", "phone", "mobile", "addresses", "merchant"]);
 }
 
 
