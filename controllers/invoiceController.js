@@ -39,7 +39,7 @@ router.get("/all", authenticate, (req, res) => {
     const query = {
         merchant: req.user
     }
-    Invoice.find(query).then((invoices) => {
+    Invoice.find(query).populate("customer").then((invoices) => {
         console.log(invoices)
         if (invoices) {
             res.send(invoices);
