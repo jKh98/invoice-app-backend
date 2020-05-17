@@ -38,9 +38,10 @@ const CustomerSchema = new Schema({
         ref: 'User'
     },
     addresses: [{
-        type: String,
-        required: true,
-    }]
+            type: String,
+            required: true,
+        },
+    ]
 })
 
 CustomerSchema.index({email: 1, sweepstakes_id: 1}, {unique: true});

@@ -17,7 +17,8 @@ router.post("/edit", authenticate, (req, res) => {
             company: req.body.company,
             phone: req.body.phone,
             mobile: req.body.mobile,
-            merchant: req.user
+            merchant: req.user,
+            addresses: req.body.addresses
         }
     }
     const options = {upsert: true, new: true, useFindAndModify: false};
