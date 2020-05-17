@@ -17,12 +17,12 @@ router.post("/edit", authenticate, (req, res) => {
             merchant: req.user
         }
     }
-    const options = {upsert: true, new: true, useFindAndModify: false};
-    Item.findOneAndUpdate(query, itemData, options).then((item) => {
-        if (item) {
-            res.send(item);
+    const options = {upsert: true, new: true, useFindAndModify: false, rawResult: true};
+    Item.findOneAndUpdate(query, itemData, options).then((rawResult) => {
+        if (rawResult.updatedExisting) {
+            res.send("Item was updated");
         } else {
-            throw "Changes were not saved."
+            res.send("New item was added");
         }
     }).catch((error) => {
         res.status(500).send(error);

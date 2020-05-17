@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const {Invoice} = require("../models/invoice")
+const {Customer} = require("../models/customer")
 const authenticate = require("../middlewares/authenticate")
-
 
 router.post("/edit", authenticate, (req, res) => {
     const query = {
@@ -23,15 +23,20 @@ router.post("/edit", authenticate, (req, res) => {
             paid: req.body.paid,
         }
     }
-    const options = {upsert: true, new: true, useFindAndModify: false};
-    Invoice.findOneAndUpdate(query, invoiceData, options).then((item) => {
-        if (item) {
-            res.send(item);
+    const options = {upsert: true, new: true, useFindAndModify: false, rawResult: true};
+    Invoice.findOneAndUpdate(query, invoiceData, options).then((rawResult) => {
+        if (rawResult.updatedExisting) {
+            res.send("Invoice was updated.");
         } else {
-            throw "Changes were not saved."
+            Customer.update({_id: req.body.customer},
+                {$inc: {number_invoices: 1, total: req.body.total}}).then(() => {
+                res.send("New Invoice Added.");
+            }).catch((e) => {
+                throw e;
+            });
         }
     }).catch((error) => {
-        res.status(500).send(error);
+        console.res.status(500).send(error);
     });
 });
 

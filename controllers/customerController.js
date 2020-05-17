@@ -21,12 +21,12 @@ router.post("/edit", authenticate, (req, res) => {
             addresses: req.body.addresses
         }
     }
-    const options = {upsert: true, new: true, useFindAndModify: false};
-    Customer.findOneAndUpdate(query, customerData, options).then((customer) => {
-        if (customer) {
-            res.send(customer);
+    const options = {upsert: true, new: true, useFindAndModify: false, rawResult: true};
+    Customer.findOneAndUpdate(query, customerData, options).then((rawResult) => {
+        if (rawResult.updatedExisting) {
+            res.send("Customer was updated.");
         } else {
-            throw "Changes were not saved."
+            res.send("New customer added.");
         }
     }).catch((error) => {
         res.status(500).send(error);
