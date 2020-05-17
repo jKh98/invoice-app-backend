@@ -72,7 +72,7 @@ const InvoiceSchema = new Schema({
             default: false,
             required: true,
         },
-        paidOn: {
+        paid_on: {
             type: Date,
             required: true,
             default: Date.now
@@ -85,6 +85,8 @@ const InvoiceSchema = new Schema({
     }
 
 })
+
+InvoiceSchema.index({number: 1, customer: 1}, {unique: true});
 
 InvoiceSchema.methods.toJSON = function () {
     const item = this;
