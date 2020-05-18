@@ -23,11 +23,7 @@ router.post("/edit", authenticate, (req, res) => {
     }
     const options = {upsert: true, new: true, useFindAndModify: false, rawResult: true};
     Customer.findOneAndUpdate(query, customerData, options).then((rawResult) => {
-        if (rawResult.updatedExisting) {
-            res.send("Customer was updated.");
-        } else {
-            res.send("New customer added.");
-        }
+        res.send(rawResult);
     }).catch((error) => {
         res.status(500).send(error);
     });
@@ -38,7 +34,6 @@ router.get("/all", authenticate, (req, res) => {
         merchant: req.user
     }
     Customer.find(query).then((customers) => {
-        console.log(customers)
         if (customers) {
             res.send(customers);
         } else {

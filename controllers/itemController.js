@@ -20,9 +20,9 @@ router.post("/edit", authenticate, (req, res) => {
     const options = {upsert: true, new: true, useFindAndModify: false, rawResult: true};
     Item.findOneAndUpdate(query, itemData, options).then((rawResult) => {
         if (rawResult.updatedExisting) {
-            res.send("Item was updated");
+            res.send(rawResult);
         } else {
-            res.send("New item was added");
+            res.send(rawResult);
         }
     }).catch((error) => {
         res.status(500).send(error);
@@ -34,7 +34,6 @@ router.get("/all", authenticate, (req, res) => {
         merchant: req.user
     }
     Item.find(query).then((items) => {
-        console.log(items)
         if (items) {
             res.send(items);
         } else {

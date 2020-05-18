@@ -20,17 +20,17 @@ router.post("/edit", authenticate, (req, res) => {
             subtotal: req.body.subtotal,
             discount: req.body.discount,
             total: req.body.total,
-            paid: req.body.paid,
+            payment: req.body.payment,
         }
     }
     const options = {upsert: true, new: true, useFindAndModify: false, rawResult: true};
     Invoice.findOneAndUpdate(query, invoiceData, options).then((rawResult) => {
         if (rawResult.updatedExisting) {
-            res.send("Invoice was updated.");
+            res.send(rawResult);
         } else {
             Customer.update({_id: req.body.customer},
                 {$inc: {number_invoices: 1, total: req.body.total}}).then(() => {
-                res.send("New Invoice Added.");
+                res.send(rawResult);
             }).catch((e) => {
                 throw e;
             });
@@ -44,8 +44,8 @@ router.get("/all", authenticate, (req, res) => {
     const query = {
         merchant: req.user
     }
-    Invoice.find(query).populate("customer").then((invoices) => {
-        console.log(invoices)
+        // .populate("customer").populate("items.item")
+    Invoice.find(query).then((invoices) => {
         if (invoices) {
             res.send(invoices);
         } else {

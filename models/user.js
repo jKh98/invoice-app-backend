@@ -83,7 +83,6 @@ UserSchema.pre("save", function (next) {
 UserSchema.statics.findUserByCredentials = function (email, password) {
     const User = this;
     return User.findOne({email}).then((user) => {
-        console.log(user)
         if (!user) {
             Promise.reject();
         } else {
