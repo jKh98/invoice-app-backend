@@ -2,7 +2,17 @@ const express = require("express");
 const router = express.Router();
 const {Invoice} = require("../models/invoice")
 const {Customer} = require("../models/customer")
+const {Payment} = require("../models/payment")
 const authenticate = require("../middlewares/authenticate")
+let nodemailer = require('nodemailer');
+
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'invoiceappserver@gmail.com',
+        pass: 'invoice@ppSender' //Should be set up with env variables
+    }
+});
 
 router.post("/edit", authenticate, (req, res) => {
     const query = {
@@ -59,21 +69,40 @@ router.get("/all", authenticate, (req, res) => {
 
 router.post("/send", authenticate, (req, res) => {
     const query = {
-        number: req.body.number,
-        customer: req.body.customer,
-        merchant: req.user,
         payment: req.body.payment
     }
-    Invoice.findOne(query).then((invoice) => {
-        if (invoice) {
-            res.send(invoice);
-            //TODO add url email
+    Payment.findOne(query).populate({
+        path: 'invoice',
+        model: 'Invoice',
+        populate: {
+            path: 'customer',
+            model: 'Customer'
+        }
+    }).then((payment) => {
+        if (payment) {
+            console.log(payment)
+            let mailOptions = {
+                from: 'invoiceappserver@gmail.com',
+                to: payment.invoice.customer.email,
+                subject: `Invoice number ${payment.invoice.number}`,
+                text: 'That was easy!'
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                    res.status(500).send("Something went wrong, email was not sent.");
+                } else {
+                    console.log('Email sent: ' + info.response);
+                    res.send("Email sent successfully");
+                }
+            });
 
         } else {
-            res.status(500).send("No data available");
+            throw Error;
         }
     }).catch((error) => {
-        res.status(500).send(error);
+        res.status(500).send("Something went wrong, email was not sent.");
     })
 });
 

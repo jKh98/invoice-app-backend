@@ -6,20 +6,18 @@ const router = express.Router();
 
 router.post("/new", authenticate, (req, res) => {
     const paymentData = {
-        invoice: req.body.invoice,
-        status: req.body.status,
-        paid_on: req.body.paid_on,
-        amount_paid: req.body.amount_paid,
-        amount_due: req.body.amount_due,
+        $set: {
+            invoice: req.body.invoice,
+            status: req.body.status,
+            paid_on: req.body.paid_on,
+            amount_paid: req.body.amount_paid,
+            amount_due: req.body.amount_due,
+        }
     }
 
-    const payment = new Payment(paymentData)
-
-    payment.save().then((doc) => {
-        if (doc) {
-            res.send(doc)
-        } else
-            res.sendStatus(400)
+    const options = {upsert: true, new: true, useFindAndModify: false, rawResult: true};
+    Payment.findOneAndUpdate({},paymentData,options).then((rawResult) => {
+            res.send(rawResult)
     }).catch((e) => {
         res.status(400).send(e);
     })
@@ -34,8 +32,9 @@ router.get('/:_id', (req, res) => {
         } else {
             if (user.status) {
                 throw "No Payments Available."
+            } else {
+                res.send(_id)
             }
-            res.send(_id)
         }
     }).catch((e) => {
         res.status(400).send(e);
