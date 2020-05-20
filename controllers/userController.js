@@ -7,7 +7,11 @@ router.post("/register", (req, res) => {
     const userData = {
         name: req.body.name,
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        company: req.body.company,
+        phone: req.body.phone,
+        address: req.body.address,
+        base_currency: req.body.base_currency,
     }
     const user = new User(userData)
     user.save().then(() => {

@@ -25,7 +25,7 @@ router.post("/edit", authenticate, (req, res) => {
     }
     const options = {upsert: true, new: true, useFindAndModify: false, rawResult: true};
     Invoice.findOneAndUpdate(query, invoiceData, options).then((rawResult) => {
-        if (rawResult.updatedExisting) {
+        if (rawResult.lastErrorObject.updatedExisting) {
             res.send(rawResult);
         } else {
             Customer.update({_id: req.body.customer},
@@ -36,7 +36,7 @@ router.post("/edit", authenticate, (req, res) => {
             });
         }
     }).catch((error) => {
-        console.res.status(500).send(error);
+        res.status(500).send(error);
     });
 });
 
@@ -44,8 +44,8 @@ router.get("/all", authenticate, (req, res) => {
     const query = {
         merchant: req.user
     }
-        // .populate("customer").populate("items.item")
-    Invoice.find(query).then((invoices) => {
+    // .populate("customer").populate("items.item")
+    Invoice.find(query).populate("payment").then((invoices) => {
         if (invoices) {
             res.send(invoices);
         } else {
@@ -55,5 +55,26 @@ router.get("/all", authenticate, (req, res) => {
         res.status(500).send(error);
     })
 })
+
+
+router.post("/send", authenticate, (req, res) => {
+    const query = {
+        number: req.body.number,
+        customer: req.body.customer,
+        merchant: req.user
+    }
+    Invoice.findOne(query).then((invoice) => {
+        if (invoice) {
+            res.send(invoice);
+            //TODO add url email
+
+        } else {
+            res.status(500).send("No data available");
+        }
+    }).catch((error) => {
+        res.status(500).send(error);
+    })
+});
+
 
 module.exports = router;

@@ -67,26 +67,10 @@ const InvoiceSchema = new Schema({
         required: true,
     },
     payment: {
-        status: {
-            type: Boolean,
-            default: false,
-            required: true,
-        },
-        paid_on: {
-            type: Date,
-            required: true,
-            default: Date.now
-        },
-        amount_paid: {
-            min: 0,
-            type: Number,
-            required: true,
-        },
-        amount_due: {
-            min: 0,
-            type: Number,
-            required: true,
-        },
+        type: Schema.ObjectId,
+        ref: 'Payment',
+        required: false,
+        default: null,
     }
 
 })

@@ -16,6 +16,7 @@ app.use("/user", userController)
 app.use("/customer", customerController)
 app.use("/item", itemController)
 app.use("/invoice", invoiceController)
+// app.use("/payment", paymentController)
 
 app.listen(3333, () => {
     console.log("server running on port:3333")

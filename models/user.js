@@ -25,6 +25,26 @@ const UserSchema = new Schema({
         required: true,
         minlength: 8
     },
+    company: {
+        type: String,
+        trim: true,
+        required: false,
+    },
+    phone: {
+        type: String,
+        trim: true,
+        required: true,
+    },
+    address: {
+        type: String,
+        trim: true,
+        required: true,
+    },
+    base_currency: {
+        type: String,
+        trim: true,
+        required: true,
+    },
     tokens: [{
         access: {
             type: String,
@@ -40,7 +60,7 @@ const UserSchema = new Schema({
 UserSchema.methods.toJSON = function () {
     const user = this;
     const userObject = user.toObject();
-    return _.pick(userObject, ["_id", "email", "name"]);
+    return _.pick(userObject, ["_id", "email", "name","company","phone","address","base_currency"]);
 }
 
 UserSchema.methods.generateAuthToken = function () {
