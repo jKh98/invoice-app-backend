@@ -61,7 +61,8 @@ router.post("/send", authenticate, (req, res) => {
     const query = {
         number: req.body.number,
         customer: req.body.customer,
-        merchant: req.user
+        merchant: req.user,
+        payment: req.body.payment
     }
     Invoice.findOne(query).then((invoice) => {
         if (invoice) {

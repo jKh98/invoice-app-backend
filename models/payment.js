@@ -16,7 +16,7 @@ const PaymentSchema = new Schema({
     },
     paid_on: {
         type: Date,
-        required: true,
+        required: false,
         default: Date.now
     },
     amount_paid: {
