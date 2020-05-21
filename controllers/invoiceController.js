@@ -80,12 +80,13 @@ router.post("/send", authenticate, (req, res) => {
         }
     }).then((payment) => {
         if (payment) {
-            console.log(payment)
+            let fullUrl =  `${req.protocol}://${req.get('host')}/payment/id/${payment._id}`;
             let mailOptions = {
                 from: 'invoiceappserver@gmail.com',
                 to: payment.invoice.customer.email,
                 subject: `Invoice number ${payment.invoice.number}`,
-                text: 'That was easy!'
+                text: `
+                Pay your latest invoice here ${fullUrl}`
             };
 
             transporter.sendMail(mailOptions, function (error, info) {
