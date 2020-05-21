@@ -49,7 +49,12 @@ const InvoiceSchema = new Schema({
             min: 0,
             type: Number,
             required: true,
-        }
+        },
+        payment: {
+            type: Schema.ObjectId,
+            required: false,
+            ref: 'Payment'
+        },
     }],
     subtotal: {
         min: 0,
@@ -73,7 +78,7 @@ InvoiceSchema.index({number: 1, customer: 1}, {unique: true});
 InvoiceSchema.methods.toJSON = function () {
     const item = this;
     const itemObject = item.toObject();
-    return _.pick(itemObject, ["_id", "number", "customer", "issued", "due", "items", "subtotal", "discount", "total",]);
+    return _.pick(itemObject, ["_id", "number", "customer", "issued", "due", "items", "subtotal", "discount", "total","payment"]);
 }
 
 const Invoice = mongoose.model('Invoice', InvoiceSchema, 'invoices')

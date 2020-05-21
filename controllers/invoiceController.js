@@ -80,7 +80,7 @@ router.post("/send", authenticate, (req, res) => {
         }
     }).then((payment) => {
         if (payment) {
-            let fullUrl =  `${req.protocol}://${req.get('host')}/payment/id/${payment._id}`;
+            let fullUrl = `${req.protocol}://${req.get('host')}/payment/id/${payment._id}`;
             let mailOptions = {
                 from: 'invoiceappserver@gmail.com',
                 to: payment.invoice.customer.email,

@@ -1,9 +1,7 @@
 // A reference to Stripe.js
 let stripe;
 
-let orderData = {
-    currency: "usd"
-};
+let orderData = {};
 
 // Disable the button until we have Stripe set up on the page
 document.querySelector("button").disabled = true;
@@ -60,7 +58,6 @@ let setupElements = function (data) {
  */
 let pay = function (stripe, card) {
     changeLoadingState(true);
-
     // Create a token with the card details
     stripe
         .createToken(card)
@@ -69,8 +66,10 @@ let pay = function (stripe, card) {
                 showError(result.error.message);
             } else {
                 orderData.token = result.token.id;
-
-                return fetch("/pay", {
+                orderData.payment_id = payment_id;
+                orderData.currency = currency;
+                orderData.amount = amount;
+                return fetch("/payment/pay/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

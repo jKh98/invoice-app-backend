@@ -12,6 +12,7 @@ const paymentController = require("./controllers/paymentController")
 
 app.use(bodyParser.urlencoded({encoded: false}));
 app.use(bodyParser.json());
+app.engine('html', require('ejs').renderFile)
 
 app.use("/user", userController)
 app.use("/customer", customerController)

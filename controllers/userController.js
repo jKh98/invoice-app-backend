@@ -26,6 +26,27 @@ router.post("/register", (req, res) => {
     })
 })
 
+router.post("/edit", authenticate, (req, res) => {
+    const query = {
+        _id: req.user._id
+    }
+    const userData = {
+        $set: {
+            company: req.body.company,
+            phone: req.body.phone,
+            address: req.body.address,
+            base_currency: req.body.base_currency,
+        }
+    }
+    const options = {upsert: true, new: true, useFindAndModify: false, rawResult: true};
+    User.findOneAndUpdate(query, userData, options).then((rawResult) => {
+        res.send(rawResult);
+    }).catch((error) => {
+        res.status(500).send(error);
+    });
+})
+
+
 router.post("/login", (req, res) => {
     User.findUserByCredentials(req.body.email, req.body.password).then((user) => {
         if (user) {
