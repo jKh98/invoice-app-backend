@@ -16,6 +16,7 @@
     "lodash": "^4.17.15",
     "mongoose": "^5.9.13",
     "nodemon": "^2.0.3",
+    "pdf-invoice": "^1.0.2",
     "stripe": "^8.54.0"
   },
   "devDependencies": {

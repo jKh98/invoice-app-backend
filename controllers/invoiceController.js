@@ -4,6 +4,7 @@ const {Invoice} = require("../models/invoice")
 const {Customer} = require("../models/customer")
 const {Payment} = require("../models/payment")
 const authenticate = require("../middlewares/authenticate")
+let path = require('path');
 let nodemailer = require('nodemailer');
 
 let transporter = nodemailer.createTransport({
@@ -66,7 +67,6 @@ router.get("/all", authenticate, (req, res) => {
     })
 })
 
-
 router.post("/send", authenticate, (req, res) => {
     const query = {
         payment: req.body.payment
@@ -74,19 +74,29 @@ router.post("/send", authenticate, (req, res) => {
     Payment.findOne(query).populate({
         path: 'invoice',
         model: 'Invoice',
-        populate: {
-            path: 'customer',
-            model: 'Customer'
-        }
+        populate: [
+            {
+                path: 'customer',
+                model: 'Customer'
+            },
+            {
+                path: 'items.item',
+                model: 'Item'
+            }],
     }).then((payment) => {
         if (payment) {
             let fullUrl = `${req.protocol}://${req.get('host')}/payment/id/${payment._id}`;
+            invoiceToPdf(req.user, payment.invoice);
             let mailOptions = {
                 from: 'invoiceappserver@gmail.com',
                 to: payment.invoice.customer.email,
                 subject: `Invoice number ${payment.invoice.number}`,
-                text: `
-                Pay your latest invoice here ${fullUrl}`
+                text: `Pay your latest invoice here ${fullUrl}`,
+                attachments: [{
+                    filename: 'invoice.pdf',
+                    path: path.join(path.resolve('attachments'), 'invoice.pdf'),
+                    contentType: 'application/pdf'
+                }]
             };
 
             transporter.sendMail(mailOptions, function (error, info) {
@@ -107,5 +117,30 @@ router.post("/send", authenticate, (req, res) => {
     })
 });
 
+
+const invoiceToPdf = (user, invoice) => {
+    const pdfInvoice = require('pdf-invoice')
+    const document = pdfInvoice({
+        company: {
+            phone: user.phone,
+            email: user.email,
+            address: user.address,
+            name: user.name,
+        },
+        customer: {
+            name: invoice.customer.name,
+            email: invoice.customer.email,
+        },
+        items: invoice.items.map(i => {
+            return {amount: i.subtotal, name: i.item.name, description: i.item.description, quantity: i.quantity}
+        })
+    })
+    console.log(invoice.items.map(i => {
+        return {amount: i.subtotal, name: i.item.name, description: i.item.description, quantity: i.quantity}
+    }))
+    const fs = require('fs')
+    document.generate() // triggers rendering
+    document.pdfkitDoc.pipe(fs.createWriteStream(path.join(path.resolve('attachments'), 'invoice.pdf')))
+}
 
 module.exports = router;
