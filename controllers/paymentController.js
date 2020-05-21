@@ -21,17 +21,13 @@ router.post("/new", authenticate, (req, res) => {
 
     const options = {upsert: true, new: true, useFindAndModify: false, rawResult: true};
     Payment.findOneAndUpdate({}, paymentData, options).then((payment) => {
-        Invoice.update({_id: req.body.invoice},
-            {$set: {payment: payment}}).then(() => {
-            res.send(payment);
-        }).catch((e) => {
-            throw e;
-        });
+        res.send(payment);
     }).catch((e) => {
         res.status(400).send(e);
     })
 })
 
+router.use('/id/:_id', express.static("views", {index: false}));
 router.get('/id/:_id', (req, res, next) => {
     let _id = req.params._id;
     return Payment.findOne({_id}).populate({
@@ -51,6 +47,7 @@ router.get('/id/:_id', (req, res, next) => {
                 res.render(path.join(views, 'index.html'),
                     {
                         payment_id: payment._id,
+                        invoice_id: payment.invoice._id,
                         currency: payment.invoice.merchant.base_currency,
                         amount: payment.amount_due
                     });
@@ -58,11 +55,9 @@ router.get('/id/:_id', (req, res, next) => {
             }
         }
     }).catch((e) => {
-        res.status(400).send("Page Not Found");
+        res.render(path.join(views, '404.html'),);
     })
 });
-
-router.use('/id/:_id', express.static("views"));
 
 
 router.get("/stripe-key", (req, res) => {
@@ -70,27 +65,28 @@ router.get("/stripe-key", (req, res) => {
 });
 
 router.post("/pay", async (req, res) => {
-    const {token, payment_id, amount, currency} = req.body;
-    try {
-        // Create a charge with the token sent by the client
-        stripe.charges.create({
-            amount: amount,
-            currency: currency,
-            source: token
-        }).then((charge) => {
-            Payment.update({_id: payment_id},
-                {
-                    status: true,
-                    amount_due: 0,
-                    amount_paid: amount,
-                    paid_on: Date.now()
-                }).then(()=>{
-                res.send(charge);
-            })
-        });
-    } catch (e) {
+    const {token, payment_id, invoice_id, amount, currency} = req.body;
+    // Create a charge with the token sent by the client
+    console.log(token, payment_id, invoice_id, amount, currency)
+    stripe.charges.create({
+        amount: amount * 100,
+        currency: currency,
+        source: token
+    }).then((charge) => {
+        Payment.update({_id: payment_id},
+            {
+                status: true,
+                amount_due: 0,
+                amount_paid: amount,
+                paid_on: Date.now()
+            }).then(() => {
+            res.send(charge);
+        }).catch((e) => {
+            throw e;
+        })
+    }).catch((e) => {
         res.send({error: e.message});
-    }
+    });
 });
 
 module.exports = router;

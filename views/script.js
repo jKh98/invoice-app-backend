@@ -67,6 +67,7 @@ let pay = function (stripe, card) {
             } else {
                 orderData.token = result.token.id;
                 orderData.payment_id = payment_id;
+                orderData.invoice_id = invoice_id;
                 orderData.currency = currency;
                 orderData.amount = amount;
                 return fetch("/payment/pay/", {
