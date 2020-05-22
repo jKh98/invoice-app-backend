@@ -1,5 +1,5 @@
 # invoice-app-backend
-This is a Node/Express JS back-end app for issuing invoices by merchants for small businesses. The app handles registration for merchants and supports adding items and customers. Once there are items and customers, merchants can choose to generate invoices to save or send as email. Emails include a pdf of the invoice with a payment url which opens a payment portal. You can find front-end client for this app on [invoice-app-client](https://github.com/jKh98/invoice-app-client).
+This is a Node/Express JS back-end app for issuing invoices by merchants of small businesses. The app handles registration for merchants and supports adding items and customers. Once there are items and customers, merchants can choose to generate invoices to save or send as email. Emails include a pdf of the invoice with a payment url which opens a payment portal. You can find front-end client for this app on [invoice-app-client](https://github.com/jKh98/invoice-app-client).
 
 ## Usage
 
