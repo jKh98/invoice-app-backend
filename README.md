@@ -4,6 +4,7 @@ This is a Node/Express JS back-end app for issuing invoices by merchants of smal
 ## Usage
 
 * Clone or download repository
+* Go into the main app directory
 * Install dependencies by running `npm install`
 * Run the application using `nodemon server` or `npm run server`
 
