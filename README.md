@@ -4,8 +4,8 @@ This is a Node/Express JS back-end app for issuing invoices by merchants for sma
 ## Usage
 
 * Clone or download repository
-* Install dependencies by running `<npm install>`
-* Run the application using `<nodemon server>` or `<npm run server>`
+* Install dependencies by running `npm install`
+* Run the application using `nodemon server` or `npm run server`
 
 ## Dependencies
 
@@ -22,12 +22,12 @@ This is a Node/Express JS back-end app for issuing invoices by merchants for sma
 
 ## Structure
   
-* `<server.js>` main entry in the app. Configures express server and main routes with corresponding controllers.
-* `<models/>` contains schema defenitions for users (merchants), customers, items, invoices and payments.
-* `<controllers/>` contains route controller for different models. For example the userController contains routes for adding, editing, authenticating users ...
-* `<middleware/>`contains middleware functions that validate requests.
-* `<db/>` contains configuration for Mongoose and MongoDB Atlas
-* `<views/>` contains static files which are served for payments
+* `server.js` main entry in the app. Configures express server and main routes with corresponding controllers.
+* `models/` contains schema defenitions for users (merchants), customers, items, invoices and payments.
+* `controllers/` contains route controller for different models. For example the userController contains routes for adding, editing, authenticating users ...
+* `middleware/`contains middleware functions that validate requests.
+* `db/` contains configuration for Mongoose and MongoDB Atlas
+* `views/` contains static files which are served for payments
 
 
 
